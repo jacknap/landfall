@@ -5,6 +5,16 @@ build/
 dist/
 wheels/
 *.egg-info
+./pyproject.toml
+.mypy_cache/
 
 # Virtual environments
 .venv
+./uv.lock
+
+# Notes
+./notes.org
+
+# Data and instructions
+./hurdat2-1851-2025-02272026.txt
+./KCC_SWDev_TechnicalInterview.pdf
