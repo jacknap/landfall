@@ -1,32 +1,33 @@
 import os
 import sys
 from compression.zlib import error
+from pathlib import Path
 
 import requests
 
 from hurricane import Hurricane
 
 
-def download_file(url, filename):
+def download_file(url, file_path):
     try:
-        print(f"Downloading {filename}")
+        print(f"Downloading {url}")
         response = requests.get(url, stream=True)
         response.raise_for_status()
 
         # Write content to file in chunks
-        with open(filename, "wb") as file:
+        with open(file_path, "wb") as file:
             for chunk in response.iter_content(chunk_size=8192):
                 if chunk:
                     file.write(chunk)
-        print(f"Successfully downloaded {filename}")
+        print(f"Successfully downloaded {file_path}")
     except requests.exceptions.RequestException as e:
         print(f"Error downloading file: {e}")
 
 
-def parse_file(filename):
+def parse_file(file_path):
     hurricanes: list[Hurricane] = []
     current = None
-    with open(filename, "rt") as file:
+    with open(file_path, "rt") as file:
         for line in file:
             if line.startswith("AL"):
                 if current != None:  # Start of file
@@ -72,13 +73,15 @@ def display_hurricanes(hurricanes):
 
 
 def main():
-    filename = "hurdat2-1851-2025-02272026.txt"
+    DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+    file_path = DATA_DIR / "hurdat2-1851-2025-02272026.txt"
+
     url = "https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2025-02272026.txt"
-    if not os.path.exists(filename):
-        download_file(url, filename)
+    if not os.path.exists(file_path):
+        download_file(url, file_path)
     else:
-        print(f"Found file {filename}")
-    display_hurricanes(parse_file(filename))
+        print(f"Found file {file_path}")
+    display_hurricanes(parse_file(file_path))
 
 
 if __name__ == "__main__":
