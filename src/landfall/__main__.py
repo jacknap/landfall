@@ -4,16 +4,9 @@ from compression.zlib import error
 from datetime import datetime
 from pathlib import Path
 
-import gi
-from gi.repository.GObject import GObjectWeakRef
-
-gi.require_version("Gtk", "4.0")
-
 import pandas
 import requests
-from gi.repository import Gtk
 
-# from gi.repository import Gtk
 from landfall.storm import Storm
 
 
@@ -185,87 +178,9 @@ def display_stdout(storms):
         print(table)
 
 
-class StormWindow(Gtk.ApplicationWindow):
-    def __init__(self, **kargs):
-        super().__init__(**kargs, title="Storms")
-
-        self.set_default_size(400, 800)
-
-        box_outer = Gtk.Box(
-            orientation=Gtk.Orientation.VERTICAL,
-            spacing=24,
-            margin_start=24,
-            margin_end=24,
-            margin_top=24,
-            margin_bottom=24,
-        )
-        self.set_child(box_outer)
-
-        storms = parse_file(load_file())
-        storm_data = {
-            "Name": list(map(lambda x: x.name, storms)),
-            "Records": list(map(lambda x: x.record_count, storms)),
-            "Max Wind Speed": list(map(lambda x: x.max_wind_speed_record()[5], storms)),
-        }
-
-        data_list = Gtk.ColumnView(
-            show_column_separators=False, show_row_separators=True
-        )
-
-        # id_column = Gtk.ColumnViewColumn(factory=Gtk.ListItemFactory(), title="ID")
-
-        # data_list.append_column(id_column)
-        # data_list.append_column(
-        #     Gtk.ColumnViewColumn(factory=Gtk.ListItemFactory(), title="Name")
-        # )
-        # data_list.append_column(
-        #     Gtk.ColumnViewColumn(factory=Gtk.ListItemFactory(), title="Max Wind Speed")
-        # )
-
-        box_outer.append(data_list)
-
-        button_box = Gtk.Box(spacing=6)
-
-        # load_button = Gtk.Button(label="Load Data")
-        # load_button.connect("clicked", self.on_load_button_clicked)
-        # button_box.append(load_button)
-
-        close_button = Gtk.Button(label="Close", hexpand=True)
-        close_button.connect("clicked", self.on_close_button_clicked)
-        button_box.append(close_button)
-
-        box_outer.append(button_box)
-
-    def on_close_button_clicked(self, _widget):
-        self.close()
-
-    def on_load_button_clicked(self, _widget):
-        """
-        storms = parse_file(load_file())
-        storm_data = {
-            "Name": list(map(lambda x: x.name, storms)),
-            "Records": list(map(lambda x: x.record_count, storms)),
-            "Max Wind Speed": list(map(lambda x: x.max_wind_speed_record()[5], storms)),
-        }
-        for s in storm_data:
-            # self.data_list.add(Gtk.ListBoxRow())
-            Gtk.ListBox.append(self.data_list, s)
-        """
-        pass
-
-
-def display_gtk(app):
-    win = StormWindow(application=app)
-    win.present()
-
-
 def main():
     storms = parse_file(load_file())
     display_stdout(storms)
-
-    # app = Gtk.Application(application_id="dev.jn.Storms")
-    # app.connect("activate", display_gtk)
-    # app.run(None)
 
 
 if __name__ == "__main__":
